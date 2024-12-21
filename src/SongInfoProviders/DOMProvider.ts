@@ -91,18 +91,27 @@ export class DOMProvider extends BaseProvider {
                     return (minutes * 60 + seconds) * 1000;
                 };
 
-                const currentTimeMillis = timeToMillis(currentTime);
-                const totalTimeMillis = timeToMillis(totalTime);
-                console.debug(`[InfLink] Time: ${currentTimeMillis} / ${totalTimeMillis}`);
+                const isPlaying = document.querySelector(".btnp-pause, .cmd-icon-pause");
+                if (isPlaying && (currentTime !== "00:00" || totalTime !== "00:00")) {
+                    const currentTimeMillis = timeToMillis(currentTime);
+                    const totalTimeMillis = timeToMillis(totalTime);
+                    console.debug(`[InfLink] Time: ${currentTimeMillis} / ${totalTimeMillis}`);
 
-                this.dispatchEvent(
-                    new CustomEvent("updateTimeline", {
-                        detail: {
-                            currentTime: currentTimeMillis,
-                            totalTime: totalTimeMillis,
-                        },
-                    }),
-                );
+                    this.dispatchEvent(
+                        new CustomEvent("updateTimeline", {
+                            detail: {
+                                currentTime: currentTimeMillis,
+                                totalTime: totalTimeMillis,
+                            },
+                        }),
+                    );
+                } else {
+                    if (!isPlaying) {
+                        console.debug("[InfLink] Playback is paused, skip update timeline");
+                    } else {
+                        console.debug("[InfLink] Getting playing time failed, skip update timeline");
+                    }
+                }
             }
         };
 
